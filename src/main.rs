@@ -39,7 +39,7 @@ fn main() {
                     let output = [line_buffer, working[0..index].to_vec()].concat();
                     let length = output.len();
                     println!("{}", convert_array(&output, length));
-                    line_buffer = working[index..data_length].to_vec();
+                    line_buffer = working[index+1..data_length].to_vec();
                 } else {
                     line_buffer = [line_buffer, working].concat();
                 }
