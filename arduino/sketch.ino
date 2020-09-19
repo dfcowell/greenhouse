@@ -10,14 +10,11 @@ void setup() {
 }
 
 void loop() {
+  int pumpStatus = LOW;
   char outputBuf[36];
   int sensorValue0 = analogRead(A0);
 
   int humidityPercentage0 = map(sensorValue0, wet, dry, 100, 0);
-
-  sprintf(outputBuf, "%d", humidityPercentage0);
-
-  Serial.println(outputBuf);
 
   if (humidityPercentage0 < humidityThreshold) {
     digitalWrite(relayPin, HIGH);
@@ -27,4 +24,8 @@ void loop() {
     digitalWrite(relayPin, LOW);
     delay(1000);
   }
+  
+  sprintf(outputBuf, "%d:%s", humidityPercentage0, pumpStatus == HIGH ? "ON" : "OFF");
+
+  Serial.println(outputBuf);
 }
