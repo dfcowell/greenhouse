@@ -20,21 +20,43 @@ fn main() {
         PRIMARY KEY(device_id, epoch_time);
     )").unwrap();*/
 
-    let mut buf: Vec<u8> = (0..255).collect();
+    let newline: u8 = 10;
 
-    while let dataLength = port.read(&mut buf[..]) {
-        let mut myVec = Vec::new();
-        myVec.clone_from(&buf);
-        print!("{}", convertArray(myVec, dataLength.unwrap()));
+    let mut buf: Vec<u8> = (0..255).collect();
+    let mut line_buffer: Vec<u8> = [].to_vec();
+
+    loop {
+        let read_result = port.read(&mut buf[..]);
+
+        match read_result {
+            Ok(data_length) => {
+                let working = buf[0..data_length].to_vec();
+
+                if working.contains(&newline) {
+                    let mut iter = working.iter();
+                    let index = iter.position(|&x| x == newline).unwrap();
+
+                    let output = [line_buffer, working[0..index].to_vec()].concat();
+                    let length = output.len();
+                    println!("{}", convert_array(&output, length));
+                    line_buffer = working[index..data_length].to_vec();
+                } else {
+                    line_buffer = [line_buffer, working].concat();
+                }
+            },
+            Err(error) => {
+                println!("Error reading from port");
+            }
+        }
     }
 }
 
-fn convertArray(buffer: Vec<u8>, length: usize) -> String {
-    let mut outputString = String::new();
+fn convert_array(buffer: &[u8], length: usize) -> String {
+    let mut output_string = String::new();
 
     for n in 0..length {
-        outputString = format!("{}{}", outputString, buffer[n] as char);
+        output_string = format!("{}{}", output_string, buffer[n] as char);
     }
 
-    return outputString;
+    return output_string;
 }
