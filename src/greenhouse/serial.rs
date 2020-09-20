@@ -1,5 +1,6 @@
 extern crate serial;
 
+use chrono::{DateTime, Utc};
 use std::io::Read;
 
 const NEW_LINE: u8 = 10;
@@ -39,4 +40,42 @@ pub fn read_line(
       return None;
     }
   }
+}
+
+pub fn parse_metric(line: String) -> Result<PlantMetric, String> {
+  let parts: Vec<&str> = line.split(':').collect();
+
+  if parts.len() < 3 {
+    return Err(String::from("Invalid metric string"));
+  }
+
+  let timestamp = Utc::now();
+  let series = String::from(parts[0]);
+  let value: i32 = parts[1].parse().unwrap();
+  let pump_status = if parts[2].trim() == "0" {
+    PumpStatus::Off
+  } else {
+    PumpStatus::On
+  };
+
+  return Ok(PlantMetric {
+    timestamp,
+    series,
+    value,
+    pump_status,
+  });
+}
+
+#[derive(Debug)]
+pub enum PumpStatus {
+  Off,
+  On,
+}
+
+#[derive(Debug)]
+pub struct PlantMetric {
+  pub timestamp: DateTime<Utc>,
+  pub series: String,
+  pub value: i32,
+  pub pump_status: PumpStatus,
 }
