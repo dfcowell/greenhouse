@@ -1,6 +1,6 @@
 # Greenhouse
 
-Greenhouse is an open-source tool for monitoring and automating the watering of plants. It consists of an Arduino-based data collector/ hardware controller and a metrics collector implemented in Rust to plot environmental data over time.
+Greenhouse is a hobby project for monitoring and automating the watering of plants. It consists of an Arduino-based data collector/ hardware controller and a metrics collector implemented in Rust to plot environmental data over time.
 
 ## Hardware Dependencies
 
