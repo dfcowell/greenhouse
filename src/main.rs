@@ -15,8 +15,9 @@ fn main() {
       "CREATE TABLE IF NOT EXISTS ts_data (
     series string NOT NULL,
     epoch_time integer NOT NULL,
+    resolution string NOT NULL,
     value integer NOT NULL,
-    PRIMARY KEY(series, epoch_time)
+    PRIMARY KEY(series, epoch_time, resolution)
   );",
       params![],
     )
@@ -45,13 +46,14 @@ fn main() {
 
     let metric = result.unwrap();
 
+    println!("{:?}", metric);
+
     db_conn.execute(
-      "INSERT INTO ts_data (series, epoch_time, value) VALUES (?1, ?2, ?3)",
+      "INSERT INTO ts_data (series, epoch_time, resolution, value) VALUES (?1, ?2, '1s', ?3)",
       params![metric.series, metric.timestamp.timestamp(), metric.value],
     );
-    println!("---");
 
-    let mut statement = db_conn
+    /*let mut statement = db_conn
       .prepare("SELECT series, epoch_time, value FROM ts_data")
       .unwrap();
     let ts_iter = statement
@@ -67,7 +69,7 @@ fn main() {
 
     for ts in ts_iter {
       println!("{:?}", ts.unwrap());
-    }
+    }*/
   }
 }
 
